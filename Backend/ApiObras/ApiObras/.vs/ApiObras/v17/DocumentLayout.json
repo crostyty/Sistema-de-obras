@@ -3,20 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\HP\\Desktop\\proyecto_obras\\Backend\\ApiObras\\ApiObras\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\HP\\Desktop\\proyecto_obras\\Backend\\ApiObras\\ApiObras\\Controllers\\ObrasController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Controllers\\ObrasController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\HP\\Desktop\\proyecto_obras\\Backend\\ApiObras\\ApiObras\\Model\\Obras.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Model\\Obras.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\HP\\Desktop\\proyecto_obras\\Backend\\ApiObras\\ApiObras\\Controllers\\ProveedoresController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Controllers\\ProveedoresController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\HP\\Desktop\\proyecto_obras\\Backend\\ApiObras\\ApiObras\\Model\\Proveedores.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Model\\Proveedores.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\HP\\Desktop\\proyecto_obras\\Backend\\ApiObras\\ApiObras\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\HP\\Desktop\\proyecto_obras\\Backend\\ApiObras\\ApiObras\\Model\\AppDbContext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Model\\AppDbContext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -31,51 +27,41 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "ProveedoresController.cs",
-              "DocumentMoniker": "C:\\Users\\HP\\Desktop\\proyecto_obras\\Backend\\ApiObras\\ApiObras\\Controllers\\ProveedoresController.cs",
-              "RelativeDocumentMoniker": "Controllers\\ProveedoresController.cs",
-              "ToolTip": "C:\\Users\\HP\\Desktop\\proyecto_obras\\Backend\\ApiObras\\ApiObras\\Controllers\\ProveedoresController.cs",
-              "RelativeToolTip": "Controllers\\ProveedoresController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Title": "ObrasController.cs",
+              "DocumentMoniker": "C:\\Users\\HP\\Desktop\\proyecto_obras\\Backend\\ApiObras\\ApiObras\\Controllers\\ObrasController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ObrasController.cs",
+              "ToolTip": "C:\\Users\\HP\\Desktop\\proyecto_obras\\Backend\\ApiObras\\ApiObras\\Controllers\\ObrasController.cs",
+              "RelativeToolTip": "Controllers\\ObrasController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-13T17:57:51.359Z",
+              "WhenOpened": "2026-03-14T17:44:59.833Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Obras.cs",
+              "DocumentMoniker": "C:\\Users\\HP\\Desktop\\proyecto_obras\\Backend\\ApiObras\\ApiObras\\Model\\Obras.cs",
+              "RelativeDocumentMoniker": "Model\\Obras.cs",
+              "ToolTip": "C:\\Users\\HP\\Desktop\\proyecto_obras\\Backend\\ApiObras\\ApiObras\\Model\\Obras.cs",
+              "RelativeToolTip": "Model\\Obras.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-14T16:46:12.081Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\HP\\Desktop\\proyecto_obras\\Backend\\ApiObras\\ApiObras\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\HP\\Desktop\\proyecto_obras\\Backend\\ApiObras\\ApiObras\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAtAAAAAAAAAA==",
+              "Title": "ProveedoresController.cs",
+              "DocumentMoniker": "C:\\Users\\HP\\Desktop\\proyecto_obras\\Backend\\ApiObras\\ApiObras\\Controllers\\ProveedoresController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ProveedoresController.cs",
+              "ToolTip": "C:\\Users\\HP\\Desktop\\proyecto_obras\\Backend\\ApiObras\\ApiObras\\Controllers\\ProveedoresController.cs",
+              "RelativeToolTip": "Controllers\\ProveedoresController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAATAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-13T17:42:04.017Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "AppDbContext.cs",
-              "DocumentMoniker": "C:\\Users\\HP\\Desktop\\proyecto_obras\\Backend\\ApiObras\\ApiObras\\Model\\AppDbContext.cs",
-              "RelativeDocumentMoniker": "Model\\AppDbContext.cs",
-              "ToolTip": "C:\\Users\\HP\\Desktop\\proyecto_obras\\Backend\\ApiObras\\ApiObras\\Model\\AppDbContext.cs",
-              "RelativeToolTip": "Model\\AppDbContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-13T17:14:46.606Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Proveedores.cs",
-              "DocumentMoniker": "C:\\Users\\HP\\Desktop\\proyecto_obras\\Backend\\ApiObras\\ApiObras\\Model\\Proveedores.cs",
-              "RelativeDocumentMoniker": "Model\\Proveedores.cs",
-              "ToolTip": "C:\\Users\\HP\\Desktop\\proyecto_obras\\Backend\\ApiObras\\ApiObras\\Model\\Proveedores.cs",
-              "RelativeToolTip": "Model\\Proveedores.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-13T17:09:35.717Z"
+              "WhenOpened": "2026-03-13T17:57:51.359Z",
+              "EditorCaption": ""
             }
           ]
         }
