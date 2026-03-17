@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "../Components/Modal";
 
 export default function obras(){
 
     const [isOpen, setIsOpen] = useState(false)
+    const [ListaObras, setListaObras] = useState([])
+    const [modoEditar, setModoEditar] = useState(false)
+    const [idEditando, setIdEditando] = useState(null)
     const [obras, setObras] = useState({
         nombre_obra: '',
         fecha_inicio: '',
@@ -17,17 +20,55 @@ export default function obras(){
         })
     }
     const handleSubmit = async () => {
-    const response = await fetch('http://localhost:5000/api/obras', {
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(obras)
-    })
-    const data = await response.json()
-    console.log(data)
+        if(modoEditar)
+        {
+            await fetch(`http://localhost:5000/api/obras/${idEditando}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify({...obras, id: idEditando})
+            })
+            setListaObras(ListaObras.map(o => 
+                o.id === idEditando ? { ...obras, id: idEditando } : o
+            ))
+            setModoEditar(false)
+            setIdEditando(null)
+        }
+        else{
+            const response = await fetch('http://localhost:5000/api/obras', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(obras)
+            })
+            const data = await response.json()
+            setListaObras([...ListaObras, data])
+        }
+        setIsOpen(false)
+    }
+   useEffect(() => {
+    fetch('http://localhost:5000/api/obras')
+    .then(res => res.json())
+    .then(data => setListaObras(data))
+    }, [])
+
+    const handleDelete = async (id) => {
+        if(!confirm("Esta seguro de elimiar la obra?")) return
+
+        await fetch(`http://localhost:5000/api/obras/${id}`, {
+            method: 'DELETE'
+        })
+        setListaObras(ListaObras.filter(o => o.id !== id))
     }
 
+    const handleEditar = (obras) => {
+        setObras({
+            nombre_obra: obras.nombre_obra,
+            fecha_inicio: obras.fecha_inicio,
+            fecha_cierre: obras.fecha_cierre
+        })
+        setIdEditando(obras.id)
+        setModoEditar(true)
+        setIsOpen(true)
+    }
 
     return(
         <div className="bg-gray-100 min-h-screen">
@@ -35,8 +76,16 @@ export default function obras(){
 
 
             <div className="flex item-center justify-end mr-5">
-                <button 
-                 onClick={() => setIsOpen(true)} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Agregar Obra</button>
+                <button
+                    onClick={() => {
+                        setObras({ nombre_obra: '', fecha_inicio: '', fecha_cierre: '' })  // limpia el formulario
+                        setModoEditar(false)
+                        setIsOpen(true)
+                    }}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                >
+                    Nuevo Proveedor
+                </button>
             </div>
 
             <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Agregar Obra">
@@ -78,6 +127,36 @@ export default function obras(){
                         </div>
                    </div>
             </Modal>
+
+            <table className="w-full mt-6 bg-white rouded-lg shadow ">
+                <thead>
+                    <tr className="bg-gray-200 text-gray-700 text-left">
+                        <th className="px-4 py-3">Nombre de la obra</th>
+                        <th className="px-4 py-3">Fecha Inicio</th>
+                        <th className="px-4 py-3">Fecha Cierre</th>
+                        <th className="px-4 py-3">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {ListaObras.map((obras) => (
+                        <tr key={obras.id} className="border-t border-gray-200 Hover:bg-gray-50">
+                            <td className="px-4 py-3">{obras.nombre_obra}</td>
+                            <td className="px-4 py-3">{obras.fecha_inicio}</td>
+                            <td className="px-4 py-3">{obras.fecha_cierre}</td>
+                            <td className="px-4 py-3">
+                                <button onClick={() => handleDelete(obras.id)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                                    Borrar
+                                </button>
+                                <button 
+                                    onClick={() => handleEditar(obras)} 
+                                    className="bg-yellow-500 text-white px-3 py-1 rounded ml-3 hover:bg-yellow-600 mr-2">
+                                    Editar
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     )
 }

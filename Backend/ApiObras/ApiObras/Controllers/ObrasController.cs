@@ -28,5 +28,27 @@ namespace ApiObras.Controllers
             await _context.SaveChangesAsync();
             return Ok(obra);
         }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteObras(int id)
+        {
+            var obra = await _context.Obras.FindAsync(id);
+
+            if (obra == null)
+                return NotFound();
+
+            _context.Obras.Remove(obra);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutObras(int id, Obra obra)
+        { 
+            if(id !=obra.Id)
+                return BadRequest();
+
+            _context.Entry(obra).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
     }
 }

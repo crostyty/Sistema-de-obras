@@ -30,5 +30,27 @@ namespace ApiObras.Controllers
             await _context.SaveChangesAsync();
             return Ok(proveedor);
         }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProveedor(int id)
+        {
+            var proveedor = await _context.Proveedores.FindAsync(id);
+
+            if(proveedor == null) 
+                return NotFound();
+
+            _context.Proveedores.Remove(proveedor);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutProveedor(int id, Proveedores proveedor)
+        {
+            if(id !=proveedor.Id)
+                return BadRequest();
+
+            _context.Entry(proveedor).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
     }
 }
