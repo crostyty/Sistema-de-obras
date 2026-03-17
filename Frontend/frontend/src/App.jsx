@@ -3,6 +3,7 @@ import { useState } from 'react'
 import SideBar from './Components/SideBar'
 import Factura from './pages/Facturas'
 import Proveedor from './pages/Proveedores'
+import Obras from './pages/Obras'
 
 
 
@@ -17,6 +18,7 @@ function App() {
           <Routes>
             <Route path='/' element={<Factura/>}/>
             <Route path='/proveedores' element={<Proveedor/>}/>
+            <Route path='/obras' element={<Obras/>}/>
           </Routes>
         </main>
       </div>

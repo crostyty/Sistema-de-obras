@@ -1,8 +1,9 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Modal from "../Components/Modal"
 
 export default function Proveedor()
 {
+    const [ListaProveedor, setListaProveedor] = useState([])
     const [isOpen, setIsOpen] = useState(false)
     const [proveedor, setProveedor] = useState({
         nombre_P: '',
@@ -15,18 +16,27 @@ export default function Proveedor()
         [e.target.name]: e.target.value
     })
 }
-   const handleSubmit = async (event) =>{
-        const response = await fetch('http://localhost:5000/api/proveedores', {
+   const handleSubmit = async () => {
+    const response = await fetch('http://localhost:5000/api/proveedores', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+        'Content-Type': 'application/json'
         },
         body: JSON.stringify(proveedor)
-        })
-   }
+    })
+    const data = await response.json()
+    console.log(data)
+    }
+
+    useEffect(() => {
+        fetch('http://localhost:5000/api/proveedores')
+        .then(res => res.json())
+        .then(data => setListaProveedor(data))
+        
+    })
     return(
         <div className="bg-gray-100 min-h-screen">
-            <h1 className="text-center text-3xl font-bold py-6">Administracion de Proveedores</h1>
+            <h1 className="text-center text-3xl font-bold py-6">Todos los proveedores</h1>
 
             <div className="flex items-center justify-end mr-5">
                 <button
@@ -37,7 +47,7 @@ export default function Proveedor()
                 </button>
             </div>
 
-            <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Agregar Factura">
+            <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Agregar Proveedor">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label className="text-sm font-medium text-gray-700">Nombre Proveedor</label>
@@ -65,7 +75,23 @@ export default function Proveedor()
                 </div>
                 </div>
             </Modal>
-    
+
+            <table className="w-full mt-6 bg-white rouded-lg shadow ">
+                <thead>
+                    <tr className="bg-gray-200 text-gray-700 text-left">
+                        <th className="px-4 py-3">Nombre del Proveedor</th>
+                        <th className="px-4 py 3">RFC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {ListaProveedor.map((proveedor) => (
+                        <tr key={proveedor.id} className="border-t border-gray-200 Hover:bg-gray-50">
+                            <td className="px-4 py-3">{proveedor.nombre_p}</td>
+                            <td className="px-4 py-3">{proveedor.rfc}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     )
 }

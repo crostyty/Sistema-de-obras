@@ -53,9 +53,7 @@ const [TipoIva, setTipoIva] = useState([
    return (
     <div className="bg-gray-100 min-h-screen">
       
-      <h1 className="text-center text-3xl font-bold py-6">
-        Administración de Facturas
-      </h1>
+      <h1 className="text-center text-3xl font-bold py-6">Todas las Facturas</h1>
   
       <div className="flex items-center justify-end mr-5">
         <button

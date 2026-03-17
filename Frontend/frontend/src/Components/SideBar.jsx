@@ -1,8 +1,9 @@
 import { Link, useLocation } from 'react-router-dom'
 
 const menu = [
-    { nombre: 'Agregar Facturas', ruta: '/' },
-    { nombre: 'Agregar Proveedores', ruta: '/proveedores' },
+    { nombre: 'Facturas', ruta: '/' },
+    { nombre: 'Proveedores', ruta: '/proveedores' },
+    { nombre: 'Obras', ruta: '/obras'}
 ]
 
 export default function SideBar({ isOpen, onToggle })
@@ -24,7 +25,7 @@ export default function SideBar({ isOpen, onToggle })
       {isOpen && (
         <>
           <h2 className="text-white text-xl font-bold px-6 pb-6">
-            Sistema de Obras
+            Administracion de Facturas
           </h2>
           <nav className="flex flex-col gap-2 px-3">
             {menu.map((item) => (

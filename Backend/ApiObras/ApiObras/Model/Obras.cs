@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiObras.Model
-{ 
+{
+    [Table("obra")]
     public class Obra
     {
         public int id { get; set; }

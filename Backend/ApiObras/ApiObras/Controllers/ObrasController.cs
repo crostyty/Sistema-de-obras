@@ -1,12 +1,11 @@
 ﻿using ApiObras.Model;
-using Microsoft.AspnNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiObras.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-
     public class ObrasController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -17,16 +16,17 @@ namespace ApiObras.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Obras>>> GetObras()
+        public async Task<ActionResult<IEnumerable<Obra>>> GetObras()
         {
             return await _context.Obras.ToListAsync();
         }
+
         [HttpPost]
-        public async Task<ActionResult<Obras>> PostObras(Obras obra)
+        public async Task<ActionResult<Obra>> PostObra(Obra obra)
         {
-            _context.Obras.add(obra);
+            _context.Obras.Add(obra);
             await _context.SaveChangesAsync();
-            return ok(obra);
+            return Ok(obra);
         }
     }
 }
