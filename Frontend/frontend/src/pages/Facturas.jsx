@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import Modal from '../Components/Modal'
 
@@ -9,6 +9,7 @@ export default function Factura()
     
 
   const [isOpen, setIsOpen] = useState(false)
+  const [tiposPago, setTiposPago] = useState([])
   const [factura, setFactura] = useState({
     folio_fiscal: '',
     fecha_emision: '',
@@ -18,28 +19,34 @@ export default function Factura()
     iva: '',
     total: ''
   })
-  const [proveedores, setProveedores] = useState([
-  { id: 1, nombre: 'Cemex' },
-  { id: 2, nombre: 'Grupo Herdez' },
-  { id: 3, nombre: 'Aceros del Norte' },
-])
 
-const [TipoPago, setTipoPago] = useState([
-  {id: 1, tipo: 'Efectivo'},
-  {id: 2, tipo: 'Transferencia'},
-  {id: 3, tipo: 'Tarjeta'},
-  {id: 4, tipo: 'Por definir'},
-])
-const [Obra, setObra] = useState([
-  {id: 1, nomObra: 'mtto'},
-  {id: 1, nomObra: 'Lagartero'},
-  {id: 1, nomObra: 'Hacienda'},
-])
+  useEffect(() => {
+    fetch('http://localhost:5000/api/pago')
+    .then(res => res.json())
+    .then(data => setTiposPago(data))
+  })
+//   const [proveedores, setProveedores] = useState([
+//   { id: 1, nombre: 'Cemex' },
+//   { id: 2, nombre: 'Grupo Herdez' },
+//   { id: 3, nombre: 'Aceros del Norte' },
+// ])
 
-const [TipoIva, setTipoIva] = useState([
-  {id: 1, tipoIva: '16%'},
-  {id: 2, tipoIva: '8%'},
-])
+// const [TipoPago, setTipoPago] = useState([
+//   {id: 1, tipo: 'Efectivo'},
+//   {id: 2, tipo: 'Transferencia'},
+//   {id: 3, tipo: 'Tarjeta'},
+//   {id: 4, tipo: 'Por definir'},
+// ])
+// const [Obra, setObra] = useState([
+//   {id: 1, nomObra: 'mtto'},
+//   {id: 1, nomObra: 'Lagartero'},
+//   {id: 1, nomObra: 'Hacienda'},
+// ])
+
+// const [TipoIva, setTipoIva] = useState([
+//   {id: 1, tipoIva: '16%'},
+//   {id: 2, tipoIva: '8%'},
+// ])
 
   const handleChange = (e) => {
     setFactura({ ...factura, [e.target.name]: e.target.value })
@@ -111,14 +118,16 @@ const [TipoIva, setTipoIva] = useState([
             <input
               list="lista_pagos"
               name="Pagos"
-              value={factura.TipoPago}
-              onChange={handleChange}
+              onChange={(e) => {
+                const select = tiposPago.find(pago => pago.nombre_Tipo === e.target.value)
+                if(select) setFactura({...factura, tipo_de_pago_id: select.id})
+              }}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Selecciona el proveedor"
             />
             <datalist id="lista_pagos">
-              {TipoPago.map((p) => (
-                <option key={p.id} value={p.tipo} />
+              {tiposPago.map((p) => (
+                <option key={p.id} value={p.nombre_Tipo} />
               ))}
             </datalist>
           </div>
