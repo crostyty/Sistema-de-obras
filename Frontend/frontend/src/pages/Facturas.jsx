@@ -6,10 +6,12 @@ import Modal from '../Components/Modal'
 
 export default function Factura()
 {
-    
-
   const [isOpen, setIsOpen] = useState(false)
+  const [ListaFacturas, setListaFacturas] = useState([])
   const [tiposPago, setTiposPago] = useState([])
+  const [proveedores, setProveedores] = useState([])
+  const [TipoIva, setTipoIva] = useState([])
+  const [Obra, setObra] = useState([])
   const [factura, setFactura] = useState({
     folio_fiscal: '',
     fecha_emision: '',
@@ -17,46 +19,49 @@ export default function Factura()
     descripcion: '',
     importe: '',
     iva: '',
-    total: ''
+    total: '',
+    proveedor_id: '',
+    obra_id: '',
+    tipo_de_pago_id: '',
+    tipo_iva_id: ''
   })
 
   useEffect(() => {
     fetch('http://localhost:5000/api/pago')
     .then(res => res.json())
     .then(data => setTiposPago(data))
-  })
-//   const [proveedores, setProveedores] = useState([
-//   { id: 1, nombre: 'Cemex' },
-//   { id: 2, nombre: 'Grupo Herdez' },
-//   { id: 3, nombre: 'Aceros del Norte' },
-// ])
 
-// const [TipoPago, setTipoPago] = useState([
-//   {id: 1, tipo: 'Efectivo'},
-//   {id: 2, tipo: 'Transferencia'},
-//   {id: 3, tipo: 'Tarjeta'},
-//   {id: 4, tipo: 'Por definir'},
-// ])
-// const [Obra, setObra] = useState([
-//   {id: 1, nomObra: 'mtto'},
-//   {id: 1, nomObra: 'Lagartero'},
-//   {id: 1, nomObra: 'Hacienda'},
-// ])
+    fetch('http://localhost:5000/api/proveedores')
+    .then(res => res.json())
+    .then(data => setProveedores(data))
 
-// const [TipoIva, setTipoIva] = useState([
-//   {id: 1, tipoIva: '16%'},
-//   {id: 2, tipoIva: '8%'},
-// ])
+    fetch('http://localhost:5000/api/iva')
+    .then(res => res.json())
+    .then(data => setTipoIva(data))
+
+    fetch('http://localhost:5000/api/obras')
+    .then(res => res.json())
+    .then(data => setObra(data))
+  }, [])
+
+
+
+
 
   const handleChange = (e) => {
     setFactura({ ...factura, [e.target.name]: e.target.value })
   }
 
-  const handleSubmit = () => {
-    console.log(factura)
+  const handleSubmit = async () => {
+    const response = await fetch('http://localhost:5000/api/facturas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(factura)
+        })
+        const data = await response.json()
+        setListaFacturas([...ListaFacturas, data])
     setIsOpen(false)
   }
-
    return (
     <div className="bg-gray-100 min-h-screen">
       
@@ -78,14 +83,16 @@ export default function Factura()
             <input
               list="lista-proveedores"
               name="proveedor"
-              value={factura.proveedor}
-              onChange={handleChange}
+              onChange={(e) => {
+                const select1 = proveedores.find(pro => pro.nombre_p === e.target.value)
+                if(select1) setFactura({...factura, proveedor_id: select1.id })
+              }}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Selecciona el proveedor"
             />
             <datalist id="lista-proveedores">
               {proveedores.map((p) => (
-                <option key={p.id} value={p.nombre} />
+                <option key={p.id} value={p.nombre_p} />
               ))}
             </datalist>
           </div>
@@ -94,7 +101,7 @@ export default function Factura()
             <label className="text-sm font-medium text-gray-700">Fecha de Emision</label>
             <input
               type='Date'
-              name="fecha_e"
+              name="fecha_emision"
               value={factura.fecha_emision}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
@@ -105,8 +112,8 @@ export default function Factura()
           <div>
             <label className="text-sm font-medium text-gray-700">Folio Fiscal</label>
             <input
-              name="fecha_e"
-              value={factura.fecha_emision}
+              name="folio_fiscal"
+              value={factura.folio_fiscal}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
               placeholder="Los primeros 5 caracteres"
@@ -123,7 +130,7 @@ export default function Factura()
                 if(select) setFactura({...factura, tipo_de_pago_id: select.id})
               }}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Selecciona el proveedor"
+              placeholder="Selecciona el metodo de pago"
             />
             <datalist id="lista_pagos">
               {tiposPago.map((p) => (
@@ -136,17 +143,19 @@ export default function Factura()
             <label className='text-sm font-medium text-gray-700'>Obra</label>
             <input list='Lista_obra'
               name='Obra'
-              value={factura.Obra} 
-              onChange={handleChange}
+
+              onChange={(e) => {
+                const select3 = Obra.find(obra => obra.nombre_obra === e.target.value)
+                if(select3) setFactura({...factura, obra_id: select3.id})
+              }}
               className='w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500'
               placeholder='Seleccione la obra'/>
               <datalist id='Lista_obra'>
                 {Obra.map((o) => (
-                  <option key = {o.id} value={o.nomObra}/>
+                  <option key = {o.id} value={o.nombre_obra}/>
                 ))}
               </datalist>
           </div>
-  
           <div>
             <label className="text-sm font-medium text-gray-700">Descripcion</label>
              <textarea
@@ -174,7 +183,6 @@ export default function Factura()
             <label className="text-sm font-medium text-gray-700">Iva</label>
             <input
               name="iva"
-              value={factura.iva}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
               placeholder="250.55"
@@ -187,13 +195,16 @@ export default function Factura()
               list="lista_Iva"
               name="Iva"
               value={factura.TipoIva}
-              onChange={handleChange}
+              onChange={(e) => {
+                const select2 = TipoIva.find(t => t.porcentaje === parseFloat(e.target.value))
+                if(select2) setFactura({...factura, tipo_iva_id: select2.id})
+              }}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Selecciona el tipo de iva"
             />
             <datalist id="lista_Iva">
               {TipoIva.map((p) => (
-                <option key={p.id} value={p.tipoIva} />
+                <option key={p.id} value={p.porcentaje} />
               ))}
             </datalist>
           </div>
@@ -216,6 +227,35 @@ export default function Factura()
           </button>
         </div>
       </Modal>
+
+
+      <div className="mt-6 mx-5">
+  <table className="w-full bg-white rounded-lg shadow">
+    <thead className="bg-gray-200">
+      <tr>
+        <th className="p-3 text-left">Folio Fiscal</th>
+        <th className="p-3 text-left">Proveedor</th>
+        <th className="p-3 text-left">Fecha Emisión</th>
+        <th className="p-3 text-left">Importe</th>
+        <th className="p-3 text-left">IVA</th>
+        <th className="p-3 text-left">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+  {facturas.map((f) => (
+    <tr key={f.id} className="border-t hover:bg-gray-50">
+      <td className="p-3">{f.proveedor?.nombre_p}</td>
+      <td className="p-3">{f.folio_fiscal}</td>
+      <td className="p-3">{f.obra?.nombre_obra ?? 'Sin obra'}</td>
+      <td className="p-3">{f.fecha_emision?.split('T')[0]}</td>
+      <td className="p-3">${f.importe}</td>
+      <td className="p-3">${f.iva}</td>
+      <td className="p-3">${f.total}</td>
+    </tr>
+  ))}
+</tbody>
+  </table>
+</div>
   
     </div>
   )

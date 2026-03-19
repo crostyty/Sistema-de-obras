@@ -9,6 +9,8 @@ namespace ApiObras.Model
         public DbSet<Proveedores> Proveedores { get; set; }
         public DbSet<Obra> Obras { get; set; }
         public DbSet<Pago> Pagos { get; set; }
+        public DbSet<Iva> Ivas { get; set; }
+        public DbSet<Factura> Facturas { get; set; }
 
     }
 }
