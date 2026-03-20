@@ -24,6 +24,12 @@ namespace ApiObras.Model
         [ForeignKey("obra_id")]
         public Obra? obra { get; set; }
 
+        [ForeignKey("tipo_de_pago_id")]
+        public Pago? tipoPago { get; set; }
+
+        [ForeignKey("tipo_iva_id")]
+        public Iva? TipoIva { get; set; }
+
 
     }
 }

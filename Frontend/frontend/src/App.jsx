@@ -14,7 +14,7 @@ function App() {
     <BrowserRouter>
       <div className='flex'>
         <SideBar isOpen={sidebarAbierto} onToggle={() => setSidebarAbierto(!sidebarAbierto)} />
-        <main className='flex-1 bg-gray-100 min-h-screen p-8'>
+        <main className='flex-1 min-h-screen overflow-hidden'>
           <Routes>
             <Route path='/' element={<Factura/>}/>
             <Route path='/proveedores' element={<Proveedor/>}/>

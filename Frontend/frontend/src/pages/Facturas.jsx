@@ -42,28 +42,72 @@ export default function Factura()
     fetch('http://localhost:5000/api/obras')
     .then(res => res.json())
     .then(data => setObra(data))
+
+    fetch('http://localhost:5000/api/facturas')
+    .then(res => res.json())
+    .then(data => { console.log(data) 
+      setListaFacturas(data)})
   }, [])
 
 
-
+const cargarFacturas = () => {
+  fetch('http://localhost:5000/api/facturas')
+    .then(res => res.json())
+    .then(data => setListaFacturas(data))
+}
 
 
   const handleChange = (e) => {
     setFactura({ ...factura, [e.target.name]: e.target.value })
   }
 
+ 
+
   const handleSubmit = async () => {
-    const response = await fetch('http://localhost:5000/api/facturas', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(factura)
-        })
-        const data = await response.json()
-        setListaFacturas([...ListaFacturas, data])
-    setIsOpen(false)
+  // Crear un objeto limpio solo con los campos necesarios
+  const facturaLimpia = {
+    folio_fiscal: factura.folio_fiscal,
+    fecha_emision: factura.fecha_emision,
+    descripcion: factura.descripcion,
+    importe: parseFloat(factura.importe),
+    iva: parseFloat(factura.iva),
+    total: parseFloat(factura.total),
+    proveedor_id: factura.proveedor_id,
+    obra_id: factura.obra_id,
+    tipo_de_pago_id: factura.tipo_de_pago_id,
+    tipo_iva_id: factura.tipo_iva_id
   }
+
+  console.log('Enviando limpio:', JSON.stringify(facturaLimpia))
+
+  try {
+    const response = await fetch('http://localhost:5000/api/facturas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(facturaLimpia)
+    })
+
+    if (response.ok) {
+      cargarFacturas()
+      setIsOpen(false)
+    }
+  } catch (error) {
+    console.log('Error:', error)
+  }
+}
+
+const handleDelete = async (id) => {
+    if (!window.confirm('¿Estás seguro de eliminar esta factura?')) return
+    
+    const response = await fetch(`http://localhost:5000/api/facturas/${id}`, {
+      method: 'DELETE'
+    })
+    if(response.ok){
+      cargarFacturas();
+    }
+}
    return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className=" min-h-screen px-6 py-6 overflow-hidden">
       
       <h1 className="text-center text-3xl font-bold py-6">Todas las Facturas</h1>
   
@@ -229,28 +273,41 @@ export default function Factura()
       </Modal>
 
 
-      <div className="mt-6 mx-5">
-  <table className="w-full bg-white rounded-lg shadow">
+      <div className="overflow-x-auto overflow-y-auto rounded-lg shadow min-h-3">
+  <table className="w-full bg-white min-w-max">
     <thead className="bg-gray-200">
       <tr>
-        <th className="p-3 text-left">Folio Fiscal</th>
         <th className="p-3 text-left">Proveedor</th>
         <th className="p-3 text-left">Fecha Emisión</th>
+        <th className="p-3 text-left">Folio Fiscal</th>
+        <th className="p-3 text-left">Obra</th>
+        <th className="p-3 text-left">Metodo de pago</th>
+        <th className="p-3 text-left">Descripcion</th>
         <th className="p-3 text-left">Importe</th>
         <th className="p-3 text-left">IVA</th>
         <th className="p-3 text-left">Total</th>
+        <th className="p-3 text-left">Acciones</th>
       </tr>
     </thead>
     <tbody>
-  {facturas.map((f) => (
-    <tr key={f.id} className="border-t hover:bg-gray-50">
+  {ListaFacturas.map((f) => (
+    <tr key={f.id} className="hover:bg-gray-50">
       <td className="p-3">{f.proveedor?.nombre_p}</td>
+      <td className="p-3">{f.fecha_emision?.split('T')[0]}</td>
       <td className="p-3">{f.folio_fiscal}</td>
       <td className="p-3">{f.obra?.nombre_obra ?? 'Sin obra'}</td>
-      <td className="p-3">{f.fecha_emision?.split('T')[0]}</td>
+      <td className="p-3">{f.tipoPago?.nombre_Tipo}</td>
+      <td className="p-3">{f.descripcion}</td>
       <td className="p-3">${f.importe}</td>
       <td className="p-3">${f.iva}</td>
       <td className="p-3">${f.total}</td>
+      <td className="p-3"><button
+        onClick={() => handleDelete(f.id)}
+        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm"
+      >
+        Eliminar
+    </button>
+    </td>
     </tr>
   ))}
 </tbody>

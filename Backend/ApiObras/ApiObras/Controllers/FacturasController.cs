@@ -22,6 +22,8 @@ namespace ApiObras.Controllers
             return await _context.Facturas
                 .Include(f => f.proveedor)
                 .Include(f => f.obra)
+                .Include(f => f.tipoPago)
+                .Include(f => f.TipoIva)
                 .ToListAsync();
         }
 
@@ -31,6 +33,17 @@ namespace ApiObras.Controllers
             _context.Facturas.Add(facturas);
             await _context.SaveChangesAsync();
             return Ok(facturas);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteFacturas(int id)
+        {
+            var factura = await _context.Facturas.FindAsync(id);
+            if (factura == null) return NotFound();
+
+            _context.Facturas.Remove(factura);
+            await _context.SaveChangesAsync();
+            return Ok();
         }
     }
 }

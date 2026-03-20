@@ -6,6 +6,6 @@
     "\\ApiObras\\ApiObras\\Controllers",
     "\\ApiObras\\ApiObras\\Model"
   ],
-  "SelectedNode": "\\ApiObras\\ApiObras\\Program.cs",
+  "SelectedNode": "\\ApiObras\\ApiObras\\Controllers\\ObrasController.cs",
   "PreviewInSolutionExplorer": false
 }
