@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 
 import Modal from '../Components/Modal'
+import { data } from 'react-router-dom'
 
 
 
@@ -11,6 +12,12 @@ export default function Factura()
   const totalAcum = ListaFacturas.reduce((acc, f) => acc + f.total, 0)
   const [tiposPago, setTiposPago] = useState([])
   const [proveedores, setProveedores] = useState([])
+  const [obrasFiltro, setObrasFiltro] = useState('')
+  const [busquedaFolio, setBusquedaFolio] = useState('')
+  const facturasFiltradas = ListaFacturas
+  .filter(f => obrasFiltro ? f.obra_id === parseInt(obrasFiltro) : true)
+  .filter(f => busquedaFolio ? f.folio_fiscal.toLowerCase().includes(busquedaFolio.toLowerCase()) : true)
+  const [gastos, setGastos] = useState([])
   const [TipoIva, setTipoIva] = useState([])
   const [Obra, setObra] = useState([])
   const [modoEditar, setModoEditar] = useState(false)
@@ -50,6 +57,10 @@ export default function Factura()
     .then(res => res.json())
     .then(data => { console.log(data) 
       setListaFacturas(data)})
+
+    fetch('http://localhost:5000/api/obras/gastos')
+    .then(res => res.json())
+    .then(data => setGastos(data))
   }, [])
 
 
@@ -174,11 +185,36 @@ const handleEditar = (f) => {
     <div className=" min-h-screen px-6 py-6 overflow-hidden">
       
       <h1 className="text-center text-3xl font-bold py-6">Todas las Facturas</h1>
+
+
+      <div className="flex items-center gap-4 mt-4 mb-2">
+        <label className="text-sm font-medium text-gray-700">Filtrar</label>
+        <select 
+         value={obrasFiltro}
+         onChange={(e) => setObrasFiltro(e.target.value)} 
+         className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Todas las obras</option>
+          {Obra.map((o) => (
+            <option key={o.id} value={o.id}>{o.nombre_obra}</option>
+          ))}
+        </select>
+          <label className="text-sm font-medium text-gray-700">Buscar folio:</label>
+          <input
+            type="text"
+            value={busquedaFolio}
+            onChange={(e) => setBusquedaFolio(e.target.value)}
+            placeholder="Ej. ABC-001"
+            className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+      </div>
+
+      
   
-      <div className="flex items-center justify-end mr-5">
+      <div className="flex items-center justify-end gap-4 mt-4 mb-2">
         <button
           onClick={() => setIsOpen(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 mb-3"
         >
           Nueva Factura
         </button>
@@ -354,7 +390,7 @@ const handleEditar = (f) => {
       </tr>
     </thead>
     <tbody>
-  {ListaFacturas.map((f) => (
+  {facturasFiltradas.map((f) => (
     <tr key={f.id} className="hover:bg-gray-50">
       <td className="p-3">{f.proveedor?.nombre_p}</td>
       <td className="p-3">{f.fecha_emision?.split('T')[0]}</td>
@@ -362,9 +398,9 @@ const handleEditar = (f) => {
       <td className="p-3">{f.obra?.nombre_obra ?? 'Sin obra'}</td>
       <td className="p-3">{f.tipoPago?.nombre_Tipo}</td>
       <td className="p-3">{f.descripcion}</td>
-      <td className="p-3">${f.importe}</td>
-      <td className="p-3">${f.iva}</td>
-      <td className="p-3">${f.total}</td>
+      <td className="p-3">${f.importe.toLocaleString({mininumFractionDigits: 2}, 'MXN')}</td>
+      <td className="p-3">${f.iva.toLocaleString({mininumFractionDigits: 2}, 'MXN')}</td>
+      <td className="p-3">${f.total.toLocaleString({mininumFractionDigits: 2}, 'MXN')}</td>
       <td className="p-3"><button
         onClick={() => handleDelete(f.id)}
         className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm"
@@ -389,8 +425,16 @@ const handleEditar = (f) => {
     <div className='bg-white rounded-lg shadow px-6 py-4'>
       <h3 className='text-sm'>Total del mes:</h3>
       <p className='text-2xl font-bold text-blue-600'>
-        ${totalAcum.toLocaleString({mininumFractionDigits: 2}, 'MXN')}
+        ${totalAcum.toLocaleString({mininumFractionDigits: 2}, 'MXN')} 
       </p>
+    </div>
+    <div className='bg-white rounded-lg shadow px-6 py-4'>
+      {gastos.map((g, index) => (
+        <p key={index} className='text-2xl font-bold text-blue-600'>
+          <h3 className='text-sm text-black'>{g.obra}:</h3>
+        ${g.total.toLocaleString({mininumFractionDigits: 2}, 'MXN')} 
+      </p>
+      ))}
     </div>
   </div>
     </div>

@@ -24,6 +24,7 @@ namespace ApiObras.Controllers
                 .Include(f => f.obra)
                 .Include(f => f.tipoPago)
                 .Include(f => f.TipoIva)
+                .OrderBy(f => f.fecha_emision)
                 .ToListAsync();
         }
 

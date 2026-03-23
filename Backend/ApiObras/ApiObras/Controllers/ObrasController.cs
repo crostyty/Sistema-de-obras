@@ -20,7 +20,20 @@ namespace ApiObras.Controllers
         {
             return await _context.Obras.ToListAsync();
         }
-
+        [HttpGet("gastos")]
+        public async Task<ActionResult> GetGastosObra()
+        {
+            var gastos = await _context.Facturas
+                .Where(f => f.obra_id != null)
+                .GroupBy(f => f.obra)
+                .Select(g => new
+                {
+                    obra = g.Key.nombre_obra,
+                    total = g.Sum(f => f.total),
+                    cantidad_facturas = g.Count()
+                }).ToListAsync();
+            return Ok(gastos);
+        }
         [HttpPost]
         public async Task<ActionResult<Obra>> PostObra(Obra obra)
         {
