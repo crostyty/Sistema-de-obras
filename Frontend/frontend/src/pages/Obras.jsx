@@ -19,36 +19,35 @@ export default function obras(){
             [e.target.name]: e.target.value
         })
     }
-    const handleSubmit = async () => {
-        if(modoEditar)
-        {
-            await fetch(`http://localhost:5000/api/obras/${idEditando}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json'},
-                body: JSON.stringify({...obras, id: idEditando})
-            })
-            setListaObras(ListaObras.map(o => 
-                o.id === idEditando ? { ...obras, id: idEditando } : o
-            ))
-            setModoEditar(false)
-            setIdEditando(null)
-        }
-        else{
-            const response = await fetch('http://localhost:5000/api/obras', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(obras)
-            })
-            const data = await response.json()
-            setListaObras([...ListaObras, data])
-        }
-        setIsOpen(false)
+   const handleSubmit = async () => {
+    if(modoEditar) {
+        await fetch(`http://localhost:5000/api/obras/${idEditando}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify({...obras, id: idEditando})
+        })
+        setListaObras(ListaObras.map(o => 
+            o.id === idEditando ? { ...obras, id: idEditando } : o
+        ))
+        setModoEditar(false)
+        setIdEditando(null)
+    } else {
+        const response = await fetch('http://localhost:5000/api/obras', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(obras)
+        })
+        const data = await response.json()
+        setListaObras([...ListaObras, data])
     }
-   useEffect(() => {
+    setIsOpen(false)
+}
+
+useEffect(() => {
     fetch('http://localhost:5000/api/obras')
     .then(res => res.json())
     .then(data => setListaObras(data))
-    }, [])
+}, [])
 
     const handleDelete = async (id) => {
         if(!confirm("Esta seguro de elimiar la obra?")) return

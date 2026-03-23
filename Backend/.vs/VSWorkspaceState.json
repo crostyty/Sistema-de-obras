@@ -4,8 +4,9 @@
     "\\ApiObras",
     "\\ApiObras\\ApiObras",
     "\\ApiObras\\ApiObras\\Controllers",
-    "\\ApiObras\\ApiObras\\Model"
+    "\\ApiObras\\ApiObras\\Model",
+    "\\ApiObras\\ApiObras\\obj"
   ],
-  "SelectedNode": "\\ApiObras\\ApiObras\\Controllers\\ObrasController.cs",
+  "SelectedNode": "\\ApiObras\\ApiObras\\appsettings.json",
   "PreviewInSolutionExplorer": false
 }

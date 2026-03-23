@@ -13,11 +13,11 @@ export default function Proveedor()
     })
 
     const handleChange = (e) => {
-    setProveedor({
-        ...proveedor,
-        [e.target.name]: e.target.value
-    })
-}
+        setProveedor({
+            ...proveedor,
+            [e.target.name]: e.target.value
+        })
+    }
    const handleSubmit = async () => {
     if(modoEditar){
         await fetch(`http://localhost:5000/api/proveedores/${idEditando}`, {

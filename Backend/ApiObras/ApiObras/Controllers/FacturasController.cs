@@ -45,5 +45,15 @@ namespace ApiObras.Controllers
             await _context.SaveChangesAsync();
             return Ok();
         }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> PutFacturas(int id, Factura facturas)
+        {
+            if (id != facturas.Id) return BadRequest();
+
+            _context.Entry(facturas).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
     }
 }

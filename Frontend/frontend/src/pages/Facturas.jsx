@@ -8,10 +8,13 @@ export default function Factura()
 {
   const [isOpen, setIsOpen] = useState(false)
   const [ListaFacturas, setListaFacturas] = useState([])
+  const totalAcum = ListaFacturas.reduce((acc, f) => acc + f.total, 0)
   const [tiposPago, setTiposPago] = useState([])
   const [proveedores, setProveedores] = useState([])
   const [TipoIva, setTipoIva] = useState([])
   const [Obra, setObra] = useState([])
+  const [modoEditar, setModoEditar] = useState(false)
+  const [idEditando, setIdEditando] = useState(null)
   const [factura, setFactura] = useState({
     folio_fiscal: '',
     fecha_emision: '',
@@ -64,35 +67,74 @@ const cargarFacturas = () => {
  
 
   const handleSubmit = async () => {
-  // Crear un objeto limpio solo con los campos necesarios
-  const facturaLimpia = {
-    folio_fiscal: factura.folio_fiscal,
-    fecha_emision: factura.fecha_emision,
-    descripcion: factura.descripcion,
-    importe: parseFloat(factura.importe),
-    iva: parseFloat(factura.iva),
-    total: parseFloat(factura.total),
-    proveedor_id: factura.proveedor_id,
-    obra_id: factura.obra_id,
-    tipo_de_pago_id: factura.tipo_de_pago_id,
-    tipo_iva_id: factura.tipo_iva_id
-  }
+  if(modoEditar)
+  {
+    const facturaEditada = {
+      id: idEditando,
+      folio_fiscal: factura.folio_fiscal,
+      fecha_emision: factura.fecha_emision,
+      descripcion: factura.descripcion,
+      importe: parseFloat(factura.importe),
+      iva: parseFloat(factura.iva),
+      total: parseFloat(factura.total),
+      proveedor_id: factura.proveedor_id,
+      obra_id: factura.obra_id === '' ? null : factura.obra_id,
+      tipo_de_pago_id: factura.tipo_de_pago_id,
+      tipo_iva_id: factura.tipo_iva_id
+    }
 
-  console.log('Enviando limpio:', JSON.stringify(facturaLimpia))
-
-  try {
-    const response = await fetch('http://localhost:5000/api/facturas', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(facturaLimpia)
+    const response = await fetch(`http://localhost:5000/api/facturas/${idEditando}`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(facturaEditada)
     })
 
-    if (response.ok) {
+    if(response.ok){
       cargarFacturas()
+      setModoEditar(false)
+      setIdEditando(null)
       setIsOpen(false)
+    } else {
+      const errorText = await response.text()
+      console.log('Error:', errorText)
     }
-  } catch (error) {
-    console.log('Error:', error)
+  }
+  else{
+      // Crear un objeto limpio solo con los campos necesarios
+      const facturaLimpia = {
+      folio_fiscal: factura.folio_fiscal,
+      fecha_emision: factura.fecha_emision,
+      descripcion: factura.descripcion,
+      importe: parseFloat(factura.importe),
+      iva: parseFloat(factura.iva),
+      total: parseFloat(factura.total),
+      proveedor_id: factura.proveedor_id,
+      obra_id: factura.obra_id === '' ? null : factura.obra_id,
+      tipo_de_pago_id: factura.tipo_de_pago_id,
+      tipo_iva_id: factura.tipo_iva_id
+    }
+
+    console.log('Enviando limpio:', JSON.stringify(facturaLimpia))
+
+    try {
+        const response = await fetch('http://localhost:5000/api/facturas', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(facturaLimpia)
+        })
+
+        if (response.ok) {
+          cargarFacturas()
+          setIsOpen(false)
+        }
+        else {
+          const errorText = await response.text()
+          console.log('Error del backend:', errorText)
+        }
+      } catch (error) {
+        console.log('Error:', error)
+    }
+    
   }
 }
 
@@ -105,6 +147,28 @@ const handleDelete = async (id) => {
     if(response.ok){
       cargarFacturas();
     }
+}
+
+
+const handleEditar = (f) => {
+  
+  setFactura({
+    id: f.id,
+    folio_fiscal: f.folio_fiscal,
+    fecha_emision: f.fecha_emision?.split('T')[0],
+    descripcion: f.descripcion,
+    importe: f.importe,
+    iva: f.iva,
+    total: f.total,
+    proveedor_id: f.proveedor_id,
+    obra_id: f.obra_id,
+    tipo_de_pago_id: f.tipo_de_pago_id,
+    tipo_iva_id: f.tipo_iva_id
+  })
+  console.log('handleEditar llamado con:', f) 
+  setIdEditando(f.id)
+  setModoEditar(true)
+  setIsOpen(true)
 }
    return (
     <div className=" min-h-screen px-6 py-6 overflow-hidden">
@@ -307,13 +371,28 @@ const handleDelete = async (id) => {
       >
         Eliminar
     </button>
+    <button
+      onClick={() =>  handleEditar(f)
+      }
+      className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-sm mr-2"
+    >
+      Editar
+    </button>
     </td>
     </tr>
   ))}
 </tbody>
   </table>
 </div>
-  
+
+  <div className='fkex justify-end mt-4 mb-2 mr-2'>
+    <div className='bg-white rounded-lg shadow px-6 py-4'>
+      <h3 className='text-sm'>Total del mes:</h3>
+      <p className='text-2xl font-bold text-blue-600'>
+        ${totalAcum.toLocaleString({mininumFractionDigits: 2}, 'MXN')}
+      </p>
+    </div>
+  </div>
     </div>
   )
 }
