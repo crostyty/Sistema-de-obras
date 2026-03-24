@@ -18,6 +18,10 @@ export default function Factura()
   .filter(f => obrasFiltro ? f.obra_id === parseInt(obrasFiltro) : true)
   .filter(f => busquedaFolio ? f.folio_fiscal.toLowerCase().includes(busquedaFolio.toLowerCase()) : true)
   const [gastos, setGastos] = useState([])
+  const [gastosIva, setGastosIva] = useState([])
+  const [ivaFiltro, setIvaFiltro] = useState([])
+  const gastosPorIva = ListaFacturas
+  .filter(f => ivaFiltro ? f.tipo_de_pago_id === parseInt(setGastosIva) : true)
   const [TipoIva, setTipoIva] = useState([])
   const [Obra, setObra] = useState([])
   const [modoEditar, setModoEditar] = useState(false)
@@ -61,6 +65,10 @@ export default function Factura()
     fetch('http://localhost:5000/api/obras/gastos')
     .then(res => res.json())
     .then(data => setGastos(data))
+
+    fetch('http://localhost:5000/api/iva/montoIva')
+    .then(res => res.json())
+    .then(data => setGastosIva(data))
   }, [])
 
 
@@ -436,6 +444,14 @@ const handleEditar = (f) => {
       </p>
       ))}
     </div>
+    {/* <div className='bg-white rounded-lg shadow px-6 py-4'>
+      {gastosIva.map((i, index) => (
+        <p key={index} className='text-2xl font-bold text-blue-600'>
+          <h3 className='text-sm text-black'>{i.porcentaje}:</h3>
+        ${i.totalAcum.toLocaleString({mininumFractionDigits: 2}, 'MXN')} 
+      </p>
+      ))}
+    </div> */}
   </div>
     </div>
   )

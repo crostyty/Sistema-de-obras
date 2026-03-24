@@ -21,5 +21,19 @@ namespace ApiObras.Controllers
         {
             return await _context.Ivas.ToListAsync();
         }
+        [HttpGet("montoIva")]
+        public async Task<ActionResult> GetMonIva()
+        {
+            var gastosPorIva = await _context.Facturas
+                .Where(f => f.tipo_iva_id != null)
+                .GroupBy(f => f.iva)
+                .Select(i => new
+                {
+                    iva = i.Key,
+                    totalIva = i.Sum(f => f.total),
+                    acumIva = i.Count()
+                }).ToListAsync();
+            return Ok(gastosPorIva);
+        }
     }
 }
