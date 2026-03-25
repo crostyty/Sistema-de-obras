@@ -9,19 +9,27 @@ export default function Factura()
 {
   const [isOpen, setIsOpen] = useState(false)
   const [ListaFacturas, setListaFacturas] = useState([])
-  const totalAcum = ListaFacturas.reduce((acc, f) => acc + f.total, 0)
   const [tiposPago, setTiposPago] = useState([])
   const [proveedores, setProveedores] = useState([])
   const [obrasFiltro, setObrasFiltro] = useState('')
+  const [importe, setImporte] = useState(0);
+  const [ivaCalculado, setIvaCalculado] = useState(0)
+  const [totalCalculado, setTotalCalculado] = useState(0)
+  const [porcentajeIvaSeleccionado, setPorcentajeIvaSeleccionado] = useState(0)
   const [busquedaFolio, setBusquedaFolio] = useState('')
   const facturasFiltradas = ListaFacturas
+  .filter(f => parseFloat(f.tipoIva?.porcentaje) !== 0)
   .filter(f => obrasFiltro ? f.obra_id === parseInt(obrasFiltro) : true)
   .filter(f => busquedaFolio ? f.folio_fiscal.toLowerCase().includes(busquedaFolio.toLowerCase()) : true)
+  const totalAcum = ListaFacturas
+  .filter(f => parseFloat(f.tipoIva?.porcentaje) !==0)
+  .reduce((acc, f) => acc + f.total, 0)
+  const totalTasa0 = ListaFacturas
+  .filter(f => f.tipoIva?.porcentaje === 0)
+  .reduce((acc, f) => acc + f.total, 0)
+  console.log('facturasFiltradas:', facturasFiltradas.map(f => f.folio_fiscal))
   const [gastos, setGastos] = useState([])
   const [gastosIva, setGastosIva] = useState([])
-  const [ivaFiltro, setIvaFiltro] = useState([])
-  const gastosPorIva = ListaFacturas
-  .filter(f => ivaFiltro ? f.tipo_de_pago_id === parseInt(setGastosIva) : true)
   const [TipoIva, setTipoIva] = useState([])
   const [Obra, setObra] = useState([])
   const [modoEditar, setModoEditar] = useState(false)
@@ -39,6 +47,7 @@ export default function Factura()
     tipo_de_pago_id: '',
     tipo_iva_id: ''
   })
+
 
   useEffect(() => {
     fetch('http://localhost:5000/api/pago')
@@ -70,6 +79,18 @@ export default function Factura()
     .then(res => res.json())
     .then(data => setGastosIva(data))
   }, [])
+
+  useEffect(() => {
+    if(importe && porcentajeIvaSeleccionado !== undefined)
+    {
+      const iva = importe * (porcentajeIvaSeleccionado / 100)
+      const total = importe + iva;
+
+      setIvaCalculado(iva)
+      setTotalCalculado(total)
+      setFactura(pre => ({...pre, importe, iva, total}))
+    }
+  }, [importe, porcentajeIvaSeleccionado])
 
 
 const cargarFacturas = () => {
@@ -133,7 +154,7 @@ const cargarFacturas = () => {
       tipo_iva_id: factura.tipo_iva_id
     }
 
-    console.log('Enviando limpio:', JSON.stringify(facturaLimpia))
+    
 
     try {
         const response = await fetch('http://localhost:5000/api/facturas', {
@@ -184,7 +205,7 @@ const handleEditar = (f) => {
     tipo_de_pago_id: f.tipo_de_pago_id,
     tipo_iva_id: f.tipo_iva_id
   })
-  console.log('handleEditar llamado con:', f) 
+
   setIdEditando(f.id)
   setModoEditar(true)
   setIsOpen(true)
@@ -324,8 +345,8 @@ const handleEditar = (f) => {
             <label className="text-sm font-medium text-gray-700">Importe</label>
             <input
               name="importe"
-              value={factura.importe}
-              onChange={handleChange}
+              value={importe}
+              onChange={(e) => setImporte(parseFloat(e.target.value) || 0)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
               placeholder="2500.55"
             />
@@ -335,7 +356,8 @@ const handleEditar = (f) => {
             <label className="text-sm font-medium text-gray-700">Iva</label>
             <input
               name="iva"
-              onChange={handleChange}
+              value={ivaCalculado.toFixed(2)}
+              readOnly
               className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
               placeholder="250.55"
             />
@@ -350,6 +372,7 @@ const handleEditar = (f) => {
               onChange={(e) => {
                 const select2 = TipoIva.find(t => t.porcentaje === parseFloat(e.target.value))
                 if(select2) setFactura({...factura, tipo_iva_id: select2.id})
+                  setPorcentajeIvaSeleccionado(select2.porcentaje)
               }}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Selecciona el tipo de iva"
@@ -365,8 +388,8 @@ const handleEditar = (f) => {
             <label className="text-sm font-medium text-gray-700">Total</label>
             <input
               name="total"
-              value={factura.total}
-              onChange={handleChange}
+              readOnly
+              value={totalCalculado.toFixed(2)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
               placeholder="2750.55"
             />
@@ -406,9 +429,9 @@ const handleEditar = (f) => {
       <td className="p-3">{f.obra?.nombre_obra ?? 'Sin obra'}</td>
       <td className="p-3">{f.tipoPago?.nombre_Tipo}</td>
       <td className="p-3">{f.descripcion}</td>
-      <td className="p-3">${f.importe.toLocaleString({mininumFractionDigits: 2}, 'MXN')}</td>
-      <td className="p-3">${f.iva.toLocaleString({mininumFractionDigits: 2}, 'MXN')}</td>
-      <td className="p-3">${f.total.toLocaleString({mininumFractionDigits: 2}, 'MXN')}</td>
+      <td className="p-3">${f.importe.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</td>
+      <td className="p-3">${f.iva.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</td>
+      <td className="p-3">${f.total.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</td>
       <td className="p-3"><button
         onClick={() => handleDelete(f.id)}
         className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm"
@@ -429,29 +452,38 @@ const handleEditar = (f) => {
   </table>
 </div>
 
-  <div className='fkex justify-end mt-4 mb-2 mr-2'>
-    <div className='bg-white rounded-lg shadow px-6 py-4'>
-      <h3 className='text-sm'>Total del mes:</h3>
-      <p className='text-2xl font-bold text-blue-600'>
-        ${totalAcum.toLocaleString({mininumFractionDigits: 2}, 'MXN')} 
-      </p>
-    </div>
+  <div className='flex justify-start mt-4 mb-2 mr-2'>
+  
     <div className='bg-white rounded-lg shadow px-6 py-4'>
       {gastos.map((g, index) => (
-        <p key={index} className='text-2xl font-bold text-blue-600'>
-          <h3 className='text-sm text-black'>{g.obra}:</h3>
-        ${g.total.toLocaleString({mininumFractionDigits: 2}, 'MXN')} 
+        <div key={index} className='mb-2'>
+          <h3 className='text-sm '><strong>{g.obra}:</strong></h3>
+          <p className='text-2xl font-bold text-blue-600'>
+        ${g.total.toLocaleString('es-MX', {mininumFractionDigits: 2})} 
       </p>
+        </div>
       ))}
     </div>
-    {/* <div className='bg-white rounded-lg shadow px-6 py-4'>
-      {gastosIva.map((i, index) => (
-        <p key={index} className='text-2xl font-bold text-blue-600'>
-          <h3 className='text-sm text-black'>{i.porcentaje}:</h3>
-        ${i.totalAcum.toLocaleString({mininumFractionDigits: 2}, 'MXN')} 
+    <div className='bg-white rounded-lg shadow px-6 py-4'>
+  {gastosIva.map((i, index) => (
+    <div key={index} className='mb-2'>
+      <h3 className='text-sm '><strong>{i.iva}%:</strong></h3>
+      <p className='text-2xl font-bold text-blue-600'>
+        ${i.totalIva?.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
       </p>
-      ))}
-    </div> */}
+    </div>
+  ))}
+  <p className="text-sm"><strong>Total tasa 0%</strong></p>
+      <p className='text-2xl font-bold text-blue-600'>
+        ${totalTasa0.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+      </p>
+</div>
+  <div className='bg-white rounded-lg shadow px-6 py-4'>
+      <h3 className='text-sm '><strong>Total del mes:</strong></h3>
+      <p className='text-2xl font-bold text-blue-600'>
+        ${totalAcum.toLocaleString('es-MX', {mininumFractionDigits: 2})} 
+      </p>
+    </div>
   </div>
     </div>
   )

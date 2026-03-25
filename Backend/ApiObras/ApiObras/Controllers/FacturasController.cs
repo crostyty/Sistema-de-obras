@@ -31,8 +31,19 @@ namespace ApiObras.Controllers
         [HttpPost]
         public async Task<ActionResult<Factura>> PostFacturas(Factura facturas)
         {
+            var tipoIva = await _context.Ivas
+                .FirstOrDefaultAsync(t => t.Id == facturas.tipo_iva_id);
+
+            if (tipoIva == null)
+                return BadRequest("Tipo de IVA inválido");
+
+            // ✅ cálculo correcto
+            facturas.iva = facturas.importe * (tipoIva.porcentaje / 100);
+            facturas.total = facturas.importe + facturas.iva;
+
             _context.Facturas.Add(facturas);
             await _context.SaveChangesAsync();
+
             return Ok(facturas);
         }
 

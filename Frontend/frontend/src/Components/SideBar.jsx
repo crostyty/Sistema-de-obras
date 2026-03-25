@@ -3,7 +3,8 @@ import { Link, useLocation } from 'react-router-dom'
 const menu = [
     { nombre: 'Facturas', ruta: '/' },
     { nombre: 'Proveedores', ruta: '/proveedores' },
-    { nombre: 'Obras', ruta: '/obras'}
+    { nombre: 'Obras', ruta: '/obras'},
+    { nombre: 'Subir Factura', ruta: '/SubirFactura'}
 ]
 
 export default function SideBar({ isOpen, onToggle })

@@ -4,6 +4,7 @@ import SideBar from './Components/SideBar'
 import Factura from './pages/Facturas'
 import Proveedor from './pages/Proveedores'
 import Obras from './pages/Obras'
+import SubirFactura from './pages/SubirFactura'
 
 
 
@@ -19,6 +20,7 @@ function App() {
             <Route path='/' element={<Factura/>}/>
             <Route path='/proveedores' element={<Proveedor/>}/>
             <Route path='/obras' element={<Obras/>}/>
+            <Route path='/SubirFactura' element={<SubirFactura/>}/>
           </Routes>
         </main>
       </div>

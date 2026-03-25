@@ -26,7 +26,7 @@ namespace ApiObras.Controllers
         {
             var gastosPorIva = await _context.Facturas
                 .Where(f => f.tipo_iva_id != null)
-                .GroupBy(f => f.iva)
+                .GroupBy(f => f.TipoIva.porcentaje)
                 .Select(i => new
                 {
                     iva = i.Key,

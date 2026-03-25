@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ApiObras")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+036d7699067b08e248629287394db42e5bd42099")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7f923cef742446863f7ef064639e0731b4bd5e5f")]
 [assembly: System.Reflection.AssemblyProductAttribute("ApiObras")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ApiObras")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
