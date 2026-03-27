@@ -17,13 +17,16 @@ export default function Factura()
   const [totalCalculado, setTotalCalculado] = useState(0)
   const [porcentajeIvaSeleccionado, setPorcentajeIvaSeleccionado] = useState(0)
   const [busquedaFolio, setBusquedaFolio] = useState('')
+  const [busquedaFecha, setBusquedaFecha] = useState('')
+  const [pestanaActiva, setPestanaActiva] = useState(1)
   const facturasFiltradas = ListaFacturas
   .filter(f => parseFloat(f.tipoIva?.porcentaje) !== 0)
   .filter(f => obrasFiltro ? f.obra_id === parseInt(obrasFiltro) : true)
   .filter(f => busquedaFolio ? f.folio_fiscal.toLowerCase().includes(busquedaFolio.toLowerCase()) : true)
+  .filter(f => busquedaFecha? f.fecha_emision.split('T')[0] === busquedaFecha : true)
   const totalAcum = ListaFacturas
-  .filter(f => parseFloat(f.tipoIva?.porcentaje) !==0)
-  .reduce((acc, f) => acc + f.total, 0)
+  .filter(f => Number(f.tipoIva?.porcentaje) !== 0)
+ .reduce((acc, f) => acc + parseFloat(f.total || 0), 0)
   const totalTasa0 = ListaFacturas
   .filter(f => f.tipoIva?.porcentaje === 0)
   .reduce((acc, f) => acc + f.total, 0)
@@ -81,16 +84,15 @@ export default function Factura()
   }, [])
 
   useEffect(() => {
-    if(importe && porcentajeIvaSeleccionado !== undefined)
-    {
-      const iva = importe * (porcentajeIvaSeleccionado / 100)
-      const total = importe + iva;
-
-      setIvaCalculado(iva)
-      setTotalCalculado(total)
-      setFactura(pre => ({...pre, importe, iva, total}))
-    }
-  }, [importe, porcentajeIvaSeleccionado])
+  const importeNum = parseFloat(importe) || 0
+  if (importeNum && porcentajeIvaSeleccionado !== undefined) {
+    const iva = importeNum * (porcentajeIvaSeleccionado / 100)
+    const total = importeNum + iva
+    setIvaCalculado(iva)
+    setTotalCalculado(total)
+    setFactura(prev => ({ ...prev, importe: importeNum, iva, total }))
+  }
+}, [importe, porcentajeIvaSeleccionado])
 
 
 const cargarFacturas = () => {
@@ -209,6 +211,8 @@ const handleEditar = (f) => {
   setIdEditando(f.id)
   setModoEditar(true)
   setIsOpen(true)
+  setImporte(f.importe)
+  setPorcentajeIvaSeleccionado(f.tipoIva?.porcentaje || 0)
 }
    return (
     <div className=" min-h-screen px-6 py-6 overflow-hidden">
@@ -217,7 +221,7 @@ const handleEditar = (f) => {
 
 
       <div className="flex items-center gap-4 mt-4 mb-2">
-        <label className="text-sm font-medium text-gray-700">Filtrar</label>
+        <label className="text-sm font-medium text-gray-700">Filtrar obras</label>
         <select 
          value={obrasFiltro}
          onChange={(e) => setObrasFiltro(e.target.value)} 
@@ -228,14 +232,24 @@ const handleEditar = (f) => {
             <option key={o.id} value={o.id}>{o.nombre_obra}</option>
           ))}
         </select>
+
+        <label className="text-sm font-medium text-gray-700">Filtrar Fecha:</label>
+          <input
+            type="date"
+            value={busquedaFecha}
+            onChange={(e) => setBusquedaFecha(e.target.value)}
+            placeholder="Ej. ABC-001"
+            className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
           <label className="text-sm font-medium text-gray-700">Buscar folio:</label>
           <input
             type="text"
             value={busquedaFolio}
             onChange={(e) => setBusquedaFolio(e.target.value)}
-            placeholder="Ej. ABC-001"
+            placeholder="Ej. C9420B71"
             className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+        
       </div>
 
       
@@ -250,7 +264,29 @@ const handleEditar = (f) => {
       </div>
   
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Agregar Factura">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className='flex border-b mb-4'>
+          <button onClick={() => setPestanaActiva(1)} className={`px-4 py-2 text-sm font-medium ${
+            pestanaActiva === 1
+            ? 'border-b-2 border-blue-600 text-blue-600'
+            : 'text-gray-500 hover:text-gray-700'
+            }`}>
+          Datos Factura
+          </button>
+
+          <button
+          onClick={() => setPestanaActiva(2)}
+          className={`px-4 py-2 text-sm font-medium ${
+            pestanaActiva === 2
+              ? 'border-b-2 border-blue-600 text-blue-600'
+              : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+        Documentos
+      </button>
+        </div>
+        {/* Pestaña 1 */}
+{pestanaActiva === 1 && (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="text-sm font-medium text-gray-700">Proveedor</label>
             <input
@@ -346,7 +382,8 @@ const handleEditar = (f) => {
             <input
               name="importe"
               value={importe}
-              onChange={(e) => setImporte(parseFloat(e.target.value) || 0)}
+              onChange={(e) => setImporte(e.target.value)}
+              onBlur={(e) => setImporte(parseFloat(e.target.value) || 0)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
               placeholder="2500.55"
             />
@@ -401,6 +438,15 @@ const handleEditar = (f) => {
             Guardar
           </button>
         </div>
+)}
+
+{/* Pestaña 2 */}
+{pestanaActiva === 2 && (
+  <div className="flex flex-col gap-4">
+    <p className="text-gray-500 text-sm">Aquí van los documentos</p>
+  </div>
+)}
+        
       </Modal>
 
 
@@ -469,13 +515,13 @@ const handleEditar = (f) => {
     <div key={index} className='mb-2'>
       <h3 className='text-sm '><strong>{i.iva}%:</strong></h3>
       <p className='text-2xl font-bold text-blue-600'>
-        ${i.totalIva?.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+        ${i.totalIva?.toLocaleString('es-MX', { mininumFractionDigits: 2 })}
       </p>
     </div>
   ))}
   <p className="text-sm"><strong>Total tasa 0%</strong></p>
       <p className='text-2xl font-bold text-blue-600'>
-        ${totalTasa0.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+        ${totalTasa0.toLocaleString('es-MX', { mininumFractionDigits: 2 })}
       </p>
 </div>
   <div className='bg-white rounded-lg shadow px-6 py-4'>

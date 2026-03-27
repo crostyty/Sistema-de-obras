@@ -37,7 +37,7 @@ namespace ApiObras.Controllers
             if (tipoIva == null)
                 return BadRequest("Tipo de IVA inválido");
 
-            // ✅ cálculo correcto
+            
             facturas.iva = facturas.importe * (tipoIva.porcentaje / 100);
             facturas.total = facturas.importe + facturas.iva;
 

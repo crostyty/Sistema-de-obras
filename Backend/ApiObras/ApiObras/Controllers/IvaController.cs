@@ -25,7 +25,7 @@ namespace ApiObras.Controllers
         public async Task<ActionResult> GetMonIva()
         {
             var gastosPorIva = await _context.Facturas
-                .Where(f => f.tipo_iva_id != null)
+                .Where(f => f.tipo_iva_id != null && f.TipoIva.porcentaje !=0)
                 .GroupBy(f => f.TipoIva.porcentaje)
                 .Select(i => new
                 {
