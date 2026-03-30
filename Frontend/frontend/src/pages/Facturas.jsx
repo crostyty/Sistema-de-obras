@@ -19,6 +19,8 @@ export default function Factura()
   const [busquedaFolio, setBusquedaFolio] = useState('')
   const [busquedaFecha, setBusquedaFecha] = useState('')
   const [pestanaActiva, setPestanaActiva] = useState(1)
+  const [pdf, setPdf] = useState(null)
+  const [comprobante, setComprobante] = useState(null)
   const facturasFiltradas = ListaFacturas
   .filter(f => parseFloat(f.tipoIva?.porcentaje) !== 0)
   .filter(f => obrasFiltro ? f.obra_id === parseInt(obrasFiltro) : true)
@@ -106,6 +108,9 @@ const cargarFacturas = () => {
     setFactura({ ...factura, [e.target.name]: e.target.value })
   }
 
+
+
+
  
 
   const handleSubmit = async () => {
@@ -141,43 +146,57 @@ const cargarFacturas = () => {
       console.log('Error:', errorText)
     }
   }
-  else{
+  
       // Crear un objeto limpio solo con los campos necesarios
       const facturaLimpia = {
-      folio_fiscal: factura.folio_fiscal,
-      fecha_emision: factura.fecha_emision,
-      descripcion: factura.descripcion,
-      importe: parseFloat(factura.importe),
-      iva: parseFloat(factura.iva),
-      total: parseFloat(factura.total),
-      proveedor_id: factura.proveedor_id,
-      obra_id: factura.obra_id === '' ? null : factura.obra_id,
-      tipo_de_pago_id: factura.tipo_de_pago_id,
-      tipo_iva_id: factura.tipo_iva_id
-    }
+  folio_fiscal: factura.folio_fiscal,
+  fecha_emision: factura.fecha_emision,
+  descripcion: factura.descripcion,
+  importe: parseFloat(factura.importe),
+  iva: parseFloat(factura.iva),
+  total: parseFloat(factura.total),
+  proveedor_id: parseInt(factura.proveedor_id),
+  obra_id: factura.obra_id === '' ? null : parseInt(factura.obra_id),
+  tipo_de_pago_id: parseInt(factura.tipo_de_pago_id),
+  tipo_iva_id: parseInt(factura.tipo_iva_id)
+}
 
     
 
-    try {
-        const response = await fetch('http://localhost:5000/api/facturas', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(facturaLimpia)
-        })
+   try {
+  const response = await fetch('http://localhost:5000/api/facturas', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(facturaLimpia)
+  })
 
-        if (response.ok) {
-          cargarFacturas()
-          setIsOpen(false)
-        }
-        else {
-          const errorText = await response.text()
-          console.log('Error del backend:', errorText)
-        }
-      } catch (error) {
-        console.log('Error:', error)
-    }
+  if (response.ok) {
+    const data = await response.json()
     
+    // Subir archivos si existen
+    if (pdf || comprobante) {
+      const formData = new FormData()
+      if (pdf) formData.append('pdf', pdf)
+      if (comprobante) formData.append('comprobante', comprobante)
+      
+      const uploadResponse = await fetch(`http://localhost:5000/api/facturas/upload/${data.id}`, {
+        method: 'POST',
+        body: formData
+      })
+      
+const uploadText = await uploadResponse.text()
+console.log('Upload response:', uploadText)
+    }
+
+    cargarFacturas()
+    setIsOpen(false)
+  } else {
+    const errorText = await response.text()
+    console.log('Error del backend:', errorText)
   }
+} catch (error) {
+  console.log('Error:', error)
+}
 }
 
 const handleDelete = async (id) => {
@@ -190,7 +209,6 @@ const handleDelete = async (id) => {
       cargarFacturas();
     }
 }
-
 
 const handleEditar = (f) => {
   
@@ -214,6 +232,7 @@ const handleEditar = (f) => {
   setImporte(f.importe)
   setPorcentajeIvaSeleccionado(f.tipoIva?.porcentaje || 0)
 }
+
    return (
     <div className=" min-h-screen px-6 py-6 overflow-hidden">
       
@@ -431,22 +450,35 @@ const handleEditar = (f) => {
               placeholder="2750.55"
             />
           </div>
-          <button
-            onClick={handleSubmit}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
-          >
-            Guardar
-          </button>
         </div>
 )}
 
 {/* Pestaña 2 */}
 {pestanaActiva === 2 && (
   <div className="flex flex-col gap-4">
-    <p className="text-gray-500 text-sm">Aquí van los documentos</p>
+    <div>
+      <label className='text-sm font-medium text-gray-700'>Pdf de la factura</label>
+      <input type="file"
+      accept='.pdf' 
+      onChange={(e) => setPdf(e.target.files[0])}
+      className='w-full border border-gray-300 rounded-lg px-3 py-2 mt-1'/>
+    </div>
+
+    <div>
+      <label className='text-sm font-medium text-gray-700'>Subir Comprobante</label>
+      <input type="file"
+      accept="image/*,.pdf" 
+      onChange={(e) => setComprobante(e.target.files[0])}
+      className='w-full border border-gray-300 rounded-lg px-3 py-2 mt-1'/>
+    </div>
   </div>
 )}
-        
+        <button
+            onClick={handleSubmit}
+            className="w-full bg-blue-600 text-white py-2 rounded-lg mt-3 hover:bg-blue-700"
+          >
+            Guardar
+          </button>
       </Modal>
 
 
@@ -480,16 +512,15 @@ const handleEditar = (f) => {
       <td className="p-3">${f.total.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</td>
       <td className="p-3"><button
         onClick={() => handleDelete(f.id)}
-        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm"
       >
-        Eliminar
+        <img src="/basura.png" alt="boton-eliminar" />
     </button>
     <button
       onClick={() =>  handleEditar(f)
       }
-      className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-sm mr-2"
+      className='ml-3'
     >
-      Editar
+      <img className='' src="/boton-editar.svg" alt="Boton-editar" width={16}/>
     </button>
     </td>
     </tr>

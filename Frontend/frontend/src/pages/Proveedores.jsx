@@ -129,13 +129,13 @@ export default function Proveedor()
                             <td className="px-4 py-3">{proveedor.nombre_p}</td>
                             <td className="px-4 py-3">{proveedor.rfc}</td>
                             <td className="px-4 py-3">
-                                <button onClick={() => handleDelete(proveedor.id)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
-                                    Borrar
+                                <button onClick={() => handleDelete(proveedor.id)} >
+                                    <img src="/basura.png" alt="boton-eliminar" />
                                 </button>
                                 <button 
                                     onClick={() => handleEditar(proveedor)} 
-                                    className="bg-yellow-500 text-white px-3 py-1 rounded ml-3 hover:bg-yellow-600 mr-2">
-                                    Editar
+                                    className="ml-3 ">
+                                    <img className='' src="/boton-editar.svg" alt="Boton-editar" width={16}/>
                                 </button>
                             </td>
                         </tr>

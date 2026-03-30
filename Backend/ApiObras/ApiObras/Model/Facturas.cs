@@ -17,6 +17,8 @@ namespace ApiObras.Model
         public int? obra_id {  get; set; }
         public int tipo_de_pago_id { get; set; }
         public int tipo_iva_id { get; set; }
+        public string? ruta_pdf { get; set; }
+        public string? ruta_comprobante { get; set; }
 
         [ForeignKey("proveedor_id")]
         public Proveedores? proveedor { get; set; }

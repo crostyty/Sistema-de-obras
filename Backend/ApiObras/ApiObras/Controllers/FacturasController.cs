@@ -1,4 +1,6 @@
-﻿using ApiObras.Model;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+
+using ApiObras.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,6 +47,39 @@ namespace ApiObras.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(facturas);
+        }
+        [HttpPost("upload/{id}")]
+        public async Task<ActionResult> SubirArchivo(int id, IFormFile? pdf, IFormFile? comprobante)
+        {
+            var factura = await _context.Facturas.FindAsync(id);
+            if (factura == null) return NotFound();
+
+            // Crear carpetas si no existen
+            var carpetaPdf = Path.Combine(Directory.GetCurrentDirectory(), "uploads", "facturas");
+            var carpetaComp = Path.Combine(Directory.GetCurrentDirectory(), "uploads", "comprobantes");
+            Directory.CreateDirectory(carpetaPdf);
+            Directory.CreateDirectory(carpetaComp);
+
+            if (pdf != null)
+            {
+                var nombrePdf = $"{id}_{pdf.FileName}";
+                var rutaPdf = Path.Combine(carpetaPdf, nombrePdf);
+                using var stream = new FileStream(rutaPdf, FileMode.Create);
+                await pdf.CopyToAsync(stream);
+                factura.ruta_pdf = $"uploads/facturas/{nombrePdf}";
+            }
+
+            if (comprobante != null)
+            {
+                var nombreComp = $"{id}_{comprobante.FileName}";
+                var rutaComp = Path.Combine(carpetaComp, nombreComp);
+                using var stream = new FileStream(rutaComp, FileMode.Create);
+                await comprobante.CopyToAsync(stream);
+                factura.ruta_comprobante = $"uploads/comprobantes/{nombreComp}";
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(factura);
         }
 
         [HttpDelete("{id}")]

@@ -3,7 +3,9 @@
     "",
     "\\ApiObras",
     "\\ApiObras\\Controllers",
-    "\\ApiObras\\Model"
+    "\\ApiObras\\Model",
+    "\\ApiObras\\uploads"
   ],
+  "SelectedNode": "\\ApiObras\\uploads\\Comprobantes",
   "PreviewInSolutionExplorer": false
 }

@@ -143,13 +143,13 @@ useEffect(() => {
                             <td className="px-4 py-3">{obras.fecha_inicio}</td>
                             <td className="px-4 py-3">{obras.fecha_cierre}</td>
                             <td className="px-4 py-3">
-                                <button onClick={() => handleDelete(obras.id)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
-                                    Borrar
+                                <button onClick={() => handleDelete(obras.id)} >
+                                    <img src="/basura.png" alt="boton-eliminar" />
                                 </button>
                                 <button 
                                     onClick={() => handleEditar(obras)} 
-                                    className="bg-yellow-500 text-white px-3 py-1 rounded ml-3 hover:bg-yellow-600 mr-2">
-                                    Editar
+                                    className=" ml-3 ">
+                                    <img className='' src="/boton-editar.svg" alt="Boton-editar" width={16}/>
                                 </button>
                             </td>
                         </tr>
