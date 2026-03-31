@@ -21,6 +21,8 @@ export default function Factura()
   const [pestanaActiva, setPestanaActiva] = useState(1)
   const [pdf, setPdf] = useState(null)
   const [comprobante, setComprobante] = useState(null)
+  const [modalDocumento, setModalDocumento] = useState(false)
+  const [facturaDocumentos, setFacturaDocumentos] = useState(null)
   const facturasFiltradas = ListaFacturas
   .filter(f => parseFloat(f.tipoIva?.porcentaje) !== 0)
   .filter(f => obrasFiltro ? f.obra_id === parseInt(obrasFiltro) : true)
@@ -103,15 +105,9 @@ const cargarFacturas = () => {
     .then(data => setListaFacturas(data))
 }
 
-
   const handleChange = (e) => {
     setFactura({ ...factura, [e.target.name]: e.target.value })
   }
-
-
-
-
- 
 
   const handleSubmit = async () => {
   if(modoEditar)
@@ -137,6 +133,7 @@ const cargarFacturas = () => {
     })
 
     if(response.ok){
+      
       cargarFacturas()
       setModoEditar(false)
       setIdEditando(null)
@@ -147,7 +144,7 @@ const cargarFacturas = () => {
     }
   }
   
-      // Crear un objeto limpio solo con los campos necesarios
+     else{ // Crear un objeto limpio solo con los campos necesarios
       const facturaLimpia = {
   folio_fiscal: factura.folio_fiscal,
   fecha_emision: factura.fecha_emision,
@@ -160,10 +157,7 @@ const cargarFacturas = () => {
   tipo_de_pago_id: parseInt(factura.tipo_de_pago_id),
   tipo_iva_id: parseInt(factura.tipo_iva_id)
 }
-
-    
-
-   try {
+try {
   const response = await fetch('http://localhost:5000/api/facturas', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -184,8 +178,8 @@ const cargarFacturas = () => {
         body: formData
       })
       
-const uploadText = await uploadResponse.text()
-console.log('Upload response:', uploadText)
+      const uploadText = await uploadResponse.text()
+      console.log('Upload response:', uploadText)
     }
 
     cargarFacturas()
@@ -197,6 +191,8 @@ console.log('Upload response:', uploadText)
 } catch (error) {
   console.log('Error:', error)
 }
+
+     }  
 }
 
 const handleDelete = async (id) => {
@@ -483,7 +479,7 @@ const handleEditar = (f) => {
 
 
       <div className="overflow-x-auto overflow-y-auto rounded-lg shadow min-h-3">
-  <table className="w-full bg-white min-w-max">
+  <table className="w-full max-h-100 overflow-y-auto bg-white min-w-max">
     <thead className="bg-gray-200">
       <tr>
         <th className="p-3 text-left">Proveedor</th>
@@ -510,7 +506,8 @@ const handleEditar = (f) => {
       <td className="p-3">${f.importe.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</td>
       <td className="p-3">${f.iva.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</td>
       <td className="p-3">${f.total.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</td>
-      <td className="p-3"><button
+      <td className="p-3">
+      <button
         onClick={() => handleDelete(f.id)}
       >
         <img src="/basura.png" alt="boton-eliminar" />
@@ -522,6 +519,19 @@ const handleEditar = (f) => {
     >
       <img className='' src="/boton-editar.svg" alt="Boton-editar" width={16}/>
     </button>
+    {(f.ruta_pdf || f.ruta_comprobante) ? (
+      <button 
+       className="text-blue-500 hover:text-blue-700"
+       title="Ver documentos"
+       onClick={() => {
+        setFacturaDocumentos(f)
+        setModalDocumento(true)
+      }}>
+        <img className='ml-3' src="/ojo.png" alt="boton ver"/>
+      </button>
+    ): (
+    <span className="text-gray-400 text-xs">Sin documentos</span>
+  )}
     </td>
     </tr>
   ))}
@@ -562,6 +572,42 @@ const handleEditar = (f) => {
       </p>
     </div>
   </div>
+
+  <Modal isOpen={modalDocumento} onClose={() => setModalDocumento(false)} title="Documentos de la factura">
+  <div className="flex flex-col gap-4 max-h-130 overflow-y-auto">
+    
+    {facturaDocumentos?.ruta_pdf && (
+      <div>
+        <h3 className="text-sm font-medium text-gray-700 mb-2">Factura PDF</h3>
+        <iframe
+          src={`http://localhost:5000/${facturaDocumentos.ruta_pdf}`}
+          className="w-full h-200 border rounded"
+          title="PDF"
+        />
+      </div>
+    )}
+
+    {facturaDocumentos?.ruta_comprobante && (
+      <div>
+        <h3 className="text-sm font-medium text-gray-700 mb-2">Comprobante de pago</h3>
+        {facturaDocumentos.ruta_comprobante.endsWith('.pdf') ? (
+          <iframe
+            src={`http://localhost:5000/${facturaDocumentos.ruta_comprobante}`}
+            className="w-full h-150 border rounded"
+            title="Comprobante PDF"
+          />
+        ) : (
+          <img
+            src={`http://localhost:5000/${facturaDocumentos.ruta_comprobante}`}
+            className="w-150 object-contain border rounded"
+            alt="Comprobante"
+          />
+        )}
+      </div>
+    )}
+
+  </div>
+</Modal>
     </div>
   )
 }
