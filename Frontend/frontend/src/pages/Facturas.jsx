@@ -133,7 +133,18 @@ const cargarFacturas = () => {
     })
 
     if(response.ok){
+      if (pdf || comprobante) {
+      const formData = new FormData()
+      if (pdf) formData.append('pdf', pdf)
+      if (comprobante) formData.append('comprobante', comprobante)
       
+      await fetch(`http://localhost:5000/api/facturas/upload/${idEditando}`, {
+        method: 'POST',
+        body: formData
+      })
+    }
+
+
       cargarFacturas()
       setModoEditar(false)
       setIdEditando(null)
@@ -452,21 +463,56 @@ const handleEditar = (f) => {
 {/* Pestaña 2 */}
 {pestanaActiva === 2 && (
   <div className="flex flex-col gap-4">
+
+    {/* Documentos actuales */}
+    {modoEditar && (
+      <div className="flex gap-4 mb-2">
+        {factura.ruta_pdf && (
+          <a
+            href={`http://localhost:5000/${factura.ruta_pdf}`}
+            target="_blank"
+            className="text-red-500 text-sm hover:underline"
+          >
+            📄 Ver PDF actual
+          </a>
+        )}
+        {factura.ruta_comprobante && (
+          <a
+            href={`http://localhost:5000/${factura.ruta_comprobante}`}
+            target="_blank"
+            className="text-green-500 text-sm hover:underline"
+          >
+            🧾 Ver comprobante actual
+          </a>
+        )}
+      </div>
+    )}
+
+    {/* Subir nuevos documentos */}
     <div>
-      <label className='text-sm font-medium text-gray-700'>Pdf de la factura</label>
-      <input type="file"
-      accept='.pdf' 
-      onChange={(e) => setPdf(e.target.files[0])}
-      className='w-full border border-gray-300 rounded-lg px-3 py-2 mt-1'/>
+      <label className="text-sm font-medium text-gray-700">
+        {modoEditar ? 'Reemplazar PDF' : 'PDF de la factura'}
+      </label>
+      <input
+        type="file"
+        accept=".pdf"
+        onChange={(e) => setPdf(e.target.files[0])}
+        className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+      />
     </div>
 
     <div>
-      <label className='text-sm font-medium text-gray-700'>Subir Comprobante</label>
-      <input type="file"
-      accept="image/*,.pdf" 
-      onChange={(e) => setComprobante(e.target.files[0])}
-      className='w-full border border-gray-300 rounded-lg px-3 py-2 mt-1'/>
+      <label className="text-sm font-medium text-gray-700">
+        {modoEditar ? 'Reemplazar comprobante' : 'Comprobante de pago'}
+      </label>
+      <input
+        type="file"
+        accept="image/*,.pdf"
+        onChange={(e) => setComprobante(e.target.files[0])}
+        className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+      />
     </div>
+
   </div>
 )}
         <button
