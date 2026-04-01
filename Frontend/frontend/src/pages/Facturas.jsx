@@ -237,6 +237,8 @@ const handleEditar = (f) => {
   setModoEditar(true)
   setIsOpen(true)
   setImporte(f.importe)
+  setPdf(null)
+  setComprobante(null)
   setPorcentajeIvaSeleccionado(f.tipoIva?.porcentaje || 0)
 }
 
@@ -289,7 +291,9 @@ const handleEditar = (f) => {
         </button>
       </div>
   
-      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Agregar Factura">
+      <Modal isOpen={isOpen} onClose={() => {setIsOpen(false) 
+      setPdf(null)
+      setComprobante(null)}} title="Agregar Factura">
         <div className='flex border-b mb-4'>
           <button onClick={() => setPestanaActiva(1)} className={`px-4 py-2 text-sm font-medium ${
             pestanaActiva === 1
